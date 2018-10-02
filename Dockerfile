@@ -4,4 +4,4 @@ MAINTAINER Johann Lee <me@qinka.pro>
 ADD . /application
 RUN pip install /application
 EXPOSE 3000
-CMD python random_service
+CMD python -m random_service
