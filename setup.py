@@ -21,6 +21,6 @@ setuptools.setup(
     ],
     install_requires=[
         'flask',
-        'wsgi',
+#        'wsgi',
         ]
     )
