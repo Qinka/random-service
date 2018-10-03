@@ -30,7 +30,7 @@ def handle_bad_request(e):
 def index():
     return redirect('https://github.com/Qinka/random-service')
 
-ipv4_pattern = r'((([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5])\.){3}([01]?[0-9]?[0-9]|2[0-4][0-9]|25[0-5]))'
+ipv4_pattern = r'(([0-9]{1,3}.)+[0-9]{1,3})+'
 ipv6_pattern = r'(([a-f0-9]{1,4}:?:)+[a-f0-9]{1,4})+'
 
 @app.route('/ipaddr', methods=['POST'])
