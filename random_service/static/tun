@@ -64,7 +64,7 @@ function print_json() {
             fi
             _STR=$_STR$data
         done
-        jq -V > /dev/null && {echo $_STR | jq 1>&2} || {echo $_STR 1>&2}
+        jq -V > /dev/null && echo $_STR | jq 1>&2 || echo $_STR 1>&2
     fi
 }
 

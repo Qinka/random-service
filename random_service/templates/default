@@ -1,9 +1,5 @@
 #!/bin/bash
 
-#Default Update list
-# load tun
-source tun
-
 # For debuging
 # export DEBUG=DEBUG
 
@@ -17,6 +13,11 @@ export TUN_API_SERVER_URL={{request.url_root}}
 # export DNS_Provider=Dnspod
 
 export DNSPOD_LOGIN_TOKEN=`cat /etc/tun.d/token`
+
+
+#Default Update list
+# load tun
+source tun
 
 # list of update records
 
