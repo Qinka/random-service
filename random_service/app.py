@@ -80,7 +80,7 @@ def post_dnspod_record_del():
 
 @app.route('/hostip', methods=['POST'])
 def post_hostip():
-    return request.remote_addr
+    return request.headers.get('X-Real-Ip', request.remote_addr)
 
 ## Install
 @app.route('/install')
