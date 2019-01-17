@@ -4,7 +4,7 @@
 # export DEBUG=DEBUG
 
 # TUN api url
-export TUN_API_SERVER_URL={{request.url_root}}
+export TUN_API_SERVER_URL={{request.url_root[0:-1]}}
 
 # Ignore error in SSL certificate
 # export IGNORE_ERROR_SSL=IGNORE
