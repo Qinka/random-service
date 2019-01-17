@@ -16,7 +16,7 @@ export TUN_API_SERVER_URL={{request.url_root}}
 # DNS service provider [not in use]
 # export DNS_Provider=Dnspod
 
-export DNSPOD_LOGIN_TOKEN=`cat /path/to/token`
+export DNSPOD_LOGIN_TOKEN=`cat /etc/tun.d/token`
 
 # list of update records
 

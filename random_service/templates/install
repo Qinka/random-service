@@ -4,7 +4,7 @@ mkdir -p /etc/tun.d
 mkdir -p /sbin
 curl {{request.url_root}}static/tun > /sbin/tun
 chmod a+x /sbin/tun
-curl {{request.url_root}}install/default > /etc/ddopsndd/default
+curl {{request.url_root}}install/default > /etc/tun.d/default
 echo "Input token"
 read token
-echo $token > /etc/ddopsndd/token
+echo $token > /etc/tun.d/token
