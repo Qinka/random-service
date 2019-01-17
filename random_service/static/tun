@@ -69,7 +69,7 @@ function print_json() {
 }
 
 function lookUpHostIP() {
-    HOSTIP=`curl                          \
+    HOSTIP=`curl -sSL                          \
                 -A $USR_AGENT             \
                 $__IGNORE_ERROR_SSL_      \
                 -X POST                   \
@@ -93,7 +93,7 @@ function lookUpIp_context() {
         err Failed to fetch host IP.
         return 1
     fi
-    IP=`curl \
+    IP=`curl -sSL \
         -A $USR_AGENT             \
         $__IGNORE_ERROR_SSL_      \
         -X POST $TUN_API_SERVER_URL/ipaddr\?ip=v4 \
@@ -107,7 +107,7 @@ function lookUpInetIP_taobao() {
 
 function fetchDnspodRecords() {
     # $1 domain
-    RECORDS=`curl                                      \
+    RECORDS=`curl -sSL                                      \
                 -A $USR_AGENT                          \
                 $__IGNORE_ERROR_SSL_                   \
                 -X POST                                \
@@ -140,7 +140,7 @@ function deleteDnspodRecord() {
         fi
         RECORDS=$RECORDS$data
     done
-    DEL_RECORED_PARAM=`curl                                                                      \
+    DEL_RECORED_PARAM=`curl -sSL                                                                      \
                 -A $USR_AGENT                                                                    \
                 $__IGNORE_ERROR_SSL_                                                             \
                 -X POST                                                                          \
@@ -159,7 +159,7 @@ function deleteDnspodRecord() {
     fi
     ## Delete record
     RECORD_ID=`echo $DEL_RECORED_PARAM | tr " " "\n"`
-    DEL_RT=`curl                                    \
+    DEL_RT=`curl -sSL                                    \
             -A $USR_AGENT                           \
             $__IGNORE_ERROR_SSL_                    \
             -X POST https://dnsapi.cn/Record.Remove \
@@ -198,7 +198,7 @@ function updateDnspodRecord() {
         RECORD_TTL=600
     fi
 
-    RT=`curl                                        \
+    RT=`curl -sSL                                        \
             -A $USR_AGENT                           \
             $__IGNORE_ERROR_SSL_                    \
             -X POST                                 \
