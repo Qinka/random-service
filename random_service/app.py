@@ -33,6 +33,7 @@ def index():
 ipv4_pattern = r'(([0-9]{1,3}.)+[0-9]{1,3})+'
 ipv6_pattern = r'(([a-f0-9]{1,4}:?:)+[a-f0-9]{1,4})+'
 
+## APIs
 @app.route('/ipaddr', methods=['POST'])
 def post_ipaddr():
     global ipv4_pattern
@@ -57,8 +58,8 @@ def post_domain_record():
     else:
         return unlines([x.get(field, '') for x in rt])
 
-@app.route('/record', methods=['POST'])
-def post_record_del():
+@app.route('/Dnspod/record', methods=['POST'])
+def post_dnspod_record_del():
     record_json  = get_record_json()
     record_name  = request.args['name']
     record_field = request.args.get('field', 'id')
@@ -77,27 +78,17 @@ def post_record_del():
         return True
     return unlines([x[record_field] for x in record_json['records'] if match(x)])
 
+@app.route('/hostip', methods=['POST'])
+def post_hostip():
+    return request.remote_addr
+
+## Install
 @app.route('/install')
 def get_install():
-    return render_template('install.sh', request = request)
+    return render_template('install', request = request)
 @app.route('/install/default')
 def get_install_default():
-    return render_template('default.sh', root = request.url_root)
-@app.route('/install/domain')
-def get_install_domain():
-    return render_template('domain.sh', domain = request.args['domain'])
-@app.route('/install/sub-domain')
-def get_install_subdomain():
-    return render_template('subdomain.sh', domain_file = request.args['domain_file'], sub_domain = request.args['sub_domain'])
-@app.route('/install/update.list')
-def get_install_update():
-    ip        = request.args.get('ip',        None)
-    config    = request.args.get('config',    None)
-    interface = request.args.get('interface', None)
-    if ip == None or config == None or interface == None:
-        return render_template('update.sh')
-    else:
-        return 'ddopsnd_core.sh ' + interface + ' ' + ip + ' ' + config
+    return render_template('default', root = request.url_root)
 
 
 def get_file_or_param(name, decode='utf-8'):

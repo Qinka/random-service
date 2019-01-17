@@ -1,7 +1,9 @@
-#.sh
+#!/bin/bash
 
-mkdir -p /etc/ddopsndd
-curl {{request.url_root}}static/dns_core.sh > /bin/ddopsndd_cor.sh
+mkdir -p /etc/tun.d
+mkdir -p /sbin
+curl {{request.url_root}}static/tun > /sbin/tun
+chmod a+x /sbin/tun
 curl {{request.url_root}}install/default > /etc/ddopsndd/default
 echo "Input token"
 read token

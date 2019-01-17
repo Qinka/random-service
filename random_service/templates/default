@@ -1,0 +1,35 @@
+#!/bin/bash
+
+#Default Update list
+# load tun
+source tun
+
+# For debuging
+# export DEBUG=DEBUG
+
+# TUN api url
+export TUN_API_SERVER_URL={{request.url_root}}
+
+# Ignore error in SSL certificate
+# export IGNORE_ERROR_SSL=IGNORE
+
+# DNS service provider [not in use]
+# export DNS_Provider=Dnspod
+
+export DNSPOD_LOGIN_TOKEN=`cat /path/to/token`
+
+# list of update records
+
+# Command for fetch ip:
+# lookUpHostIP: return IP fetched by tun service
+# lookUpInetIP_taobao: return IP in the Internet
+# ifconfig lo | grep inet | lookUpIp_context 4
+
+
+# Using tun-dnspod
+# tunDnspod domain sub-domain type(A or AAAA) ip(or command to fetch ip) line(默认 as default) TTL(600 as default)
+# note you'd better not use "line" option
+# e.g.
+# tunDnspod qinka.pro test A `lookUpInetIP`           "" ""
+# tunDnspod qinka.pro test A `lookUpIp_context tun0`  "" ""
+# tunDnspod qinka.pro test A `lookUpHostIP`           "" ""

@@ -1,0 +1,268 @@
+#!/bin/bash
+
+
+function debug() {
+    if [ -n "$DEBUG" ]; then
+        echo $@ 1>&2
+    fi
+}
+
+function err() {
+    echo $@ 1>&2
+}
+
+####################################################
+################ Setting and Checking ##############
+####################################################
+
+# User Agent
+USR_AGENT="tun/0.1 me@qinka.pro"
+debug Using USR_AGENT $USR_AGENT
+
+# Setting localhost to default API server url, if TUN_API_SERVER_URL not set.
+if [ -z "$TUN_API_SERVER_URL" ]; then
+    export TUN_API_SERVER_URL=localhost
+fi
+debug Using API server $TUN_API_SERVER_URL
+
+# If err SSL certificate
+if [ -n "$IGNORE_ERROR_SSL" ]; then
+    export __IGNORE_ERROR_SSL__=" -k "
+    debug "Ignore err in ssl centificate"
+fi
+
+# Setting default DNS server provider as default one
+if [ -z "$DNS_Provider" ]; then
+    export DNS_Provider=Dnspod
+fi
+debug Using DNS service provider $DNS_Provider
+
+# Checking for ecach DNS service provider
+case $DNS_Provider in
+    Dnspod)
+        if [ -z "$DNSPOD_LOGIN_TOKEN" ]; then
+            err Dnspod login token unset
+            return 1
+        fi
+    ;;
+    *)
+        err Unsupported DNS service provider $DNS_Provider
+        return 1
+    ;;
+esac
+
+function help() {
+    echo "Tun is a script including sone shell function for update DNS information dynamically".
+}
+
+function print_json() {
+    if [ -n "$DEBUG" ]; then
+        _STR=""
+        while read data; do
+            if [ -n "$_STR" ]; then
+                _STR=$_STR"\n"
+            fi
+            _STR=$_STR$data
+        done
+        jq -V > /dev/null && {echo $_STR | jq 1>&2} || {echo $_STR 1>&2}
+    fi
+}
+
+function lookUpHostIP() {
+    HOSTIP=`curl                          \
+                -A $USR_AGENT             \
+                $__IGNORE_ERROR_SSL_      \
+                -X POST                   \
+                $TUN_API_SERVER_URL/hostip`
+    if [ $? = 0 ]; then
+        debug Host IP is $HOSTIP
+        echo $HOSTIP
+        return 0
+    else
+        err Failed to fetch host IP.
+        return 1
+    fi
+}
+
+function lookUpIp_context() {
+    # $1 interface
+    INFO=`ifconfig $1 | grep inet`
+    if [ $? = 0 ]; then
+        debug Get interface info IP is $INFO
+    else
+        err Failed to fetch host IP.
+        return 1
+    fi
+    IP=`curl \
+        -A $USR_AGENT             \
+        $__IGNORE_ERROR_SSL_      \
+        -X POST $TUN_API_SERVER_URL/ipaddr\?ip=v4 \
+        -F "context=$INFO"`
+    echo $IP | awk '{print $1}'
+}
+
+function lookUpInetIP_taobao() {
+    curl https://www.taobao.com/help/getip.php | awk -F\" '{print $2}'
+}
+
+function fetchDnspodRecords() {
+    # $1 domain
+    RECORDS=`curl                                      \
+                -A $USR_AGENT                          \
+                $__IGNORE_ERROR_SSL_                   \
+                -X POST                                \
+                https://dnsapi.cn/Record.List          \
+                -F "login_token=$DNSPOD_LOGIN_TOKEN"   \
+                -F "format=json"                       \
+                -F "lang=$REQLANG"                     \
+                -F "domain=$1"                         `
+    if [ $? = 0 ]; then
+        debug DNSPOD Records is
+        echo $RECORDS | print_json
+        echo $RECORDS
+        return 0
+    else
+        err Failed to fetch Records via Dnspod
+        return 1
+    fi
+}
+
+function deleteDnspodRecord() {
+    # $1/domain/your domain
+    # $2/sub domain/your sub domain
+    # $3/record type (For dnspod)/A or AAAA
+
+    ## Fetch parameter
+    RECORDS=""
+    while read data; do
+        if [ -n "$RECORDS" ]; then
+            RECORDS=$RECORDS"\n"
+        fi
+        RECORDS=$RECORDS$data
+    done
+    DEL_RECORED_PARAM=`curl                                                                      \
+                -A $USR_AGENT                                                                    \
+                $__IGNORE_ERROR_SSL_                                                             \
+                -X POST                                                                          \
+                $TUN_API_SERVER_URL/$DNS_Provider/record\?field=id\&name=$2\&type=$3\&split=inet \
+                -F "record=$RECORDS"` # ? what is inet? TODO
+    if [ $? = 0 ]; then
+        debug "success found record ($DEL_RECORED_PARAM) to be deleted."
+    else
+        if [ -n "$DEL_RECORED_PARAM" ]; then
+            err Failed to fetch Records via Dnspod
+            return 1
+        else
+            debug  No Records.
+            return 0
+        fi
+    fi
+    ## Delete record
+    RECORD_ID=`echo $DEL_RECORED_PARAM | tr " " "\n"`
+    DEL_RT=`curl                                    \
+            -A $USR_AGENT                           \
+            $__IGNORE_ERROR_SSL_                    \
+            -X POST https://dnsapi.cn/Record.Remove \
+            -F login_token=$DNSPOD_LOGIN_TOKEN      \
+            -F format=json                          \
+            -F lang=cn                              \
+            -F record_id=$RECORD_ID                 \
+            -F domain=$1 `
+    if [ $? = 0 ]; then
+        debug "success delete record ($RECORD_ID) to be deleted."
+        debug $DEL_RT
+        return 0
+    else
+        err Failed to delete record.
+        return 1
+    fi
+}
+
+function updateDnspodRecord() {
+    # $1/domain/your domain
+    # $2/sub domain/your sub domain
+    # $3/record type/ A or AAAA
+    # $4/record value/ ip
+    # $5/record line/line ("默认" for default). **It is optional, but less a ""**
+    # $6/TTL/TTL value ("600" for default). **It is optional, but less a ""**
+
+    if [ -n "$5" ]; then
+        RECORD_LINE=$5
+    else
+        RECORD_LINE="默认"
+    fi
+
+    if [ -n "$6" ]; then
+        RECORD_TTL=$6
+    else
+        RECORD_TTL=600
+    fi
+
+    RT=`curl                                        \
+            -A $USR_AGENT                           \
+            $__IGNORE_ERROR_SSL_                    \
+            -X POST                                 \
+            https://dnsapi.cn/Record.Create         \
+            -F "login_token=$DNSPOD_LOGIN_TOKEN"    \
+            -F "format=json"                        \
+            -F "domain=$1"                          \
+            -F "sub_domain=$2"                      \
+            -F "value=$4"                           \
+            -F "record_type=$3"                     \
+            -F "record_line=$RECORD_LINE"           \
+            -F "ttl=$RECORD_TTL"`
+
+    if [ $? = 0 ]; then
+        debug success update a new record.
+        debug $RT
+        return 0
+    else
+        err Failed to update record.
+        return 1
+    fi
+}
+
+function fetchRecords() {
+    # $1 domain
+    fetch"$DNS_Provider"Records $@
+    return $?
+}
+
+function deleteRecord() {
+    # $1/domain/your domain
+    # $2/sub domain/your sub domain
+    # $3/record type/different between echo DNS service provider
+    delete"$DNS_Provider"Record $@
+    return $?
+}
+
+function updateRecord() {
+    # $1/domain/your domain
+    # $2/sub domain/your sub domain
+    # $3/record type/ A or AAAA
+    # $4/record value/ ip
+    # $5/record line/line ("默认" for default). **It is optional, but less a ""**
+    # $6/TTL/TTL value ("600" for default). **It is optional, but less a ""**
+    update"$DNS_Provider"Record $@
+    return $?
+}
+
+function tunDnspod() {
+    # $1/domain/your domain
+    # $2/sub domain/your sub domain
+    # $3/record type/ A or AAAA
+    # $4/record value/ ip
+    # $5/record line/line ("默认" for default). **It is optional, but less a ""**
+    # $6/TTL/TTL value ("600" for default). **It is optional, but less a ""**
+
+    RECORDS=`fetchDnspodRecords $1`
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+    echo $RECORDS | deleteDnspodRecord $1 $2 $3
+    if [ $? -ne 0 ]; then
+        return 1
+    fi
+
+    updateDnspodRecord $@
+}

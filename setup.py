@@ -1,7 +1,11 @@
-import  setuptools
+import setuptools
+import os
 
 with open("README.md", "r") as f:
     long_description = f.read()
+
+def find_files(path):
+    return map(lambda x:os.path.join(path,x), os.listdir(path))
 
 setuptools.setup(
     name = "random-service",
@@ -21,6 +25,10 @@ setuptools.setup(
     ],
     install_requires=[
         'flask',
-#        'wsgi',
+        ],
+    data_files = [
+        ('', find_files('random_service/static')),
+        ('', find_files('random_service/templates'))
         ]
     )
+
