@@ -2,9 +2,9 @@
 
 mkdir -p /etc/tun.d
 mkdir -p /sbin
-curl {{request.url_root}}static/tun > /sbin/tun
+curl -sSL {{request.url_root}}static/tun > /sbin/tun
 chmod a+x /sbin/tun
-curl {{request.url_root}}install/default > /etc/tun.d/default
+curl -sSL {{request.url_root}}install/default > /etc/tun.d/default
 chmod a+x /etc/tun.d/default
 echo "Input token"
 read token
