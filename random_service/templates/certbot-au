@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# For debuging
+# export DEBUG=DEBUG
+
+# TUN api url
+#export TUN_API_SERVER_URL=https://api.qinka.pro
+export TUN_API_SERVER_URL={{request.url_root[0:-1]}}
+
+# Ignore error in SSL certificate
+# export IGNORE_ERROR_SSL=IGNORE
+
+# DNS service provider [not in use]
+# export DNS_Provider=Dnspod
+
+export DNSPOD_LOGIN_TOKEN=`cat /etc/tun.d/token`
+
+
+#Default Update list
+# load tun
+source tun
+
+CERTBOT_PREFIX="_acme-challenge"
+SUBDOMAIN=`echo $CERTBOT_DOMAIN | sed 's/.qinka.pro//g'`
+tunDnspod qinka.pro $CERTBOT_PREFIX.$SUBDOMAIN TXT $CERTBOT_VALIDATION "" ""
+echo xxxxxxxxxxx $CERTBOT_PREFIX.$SUBDOMAIN TXT $CERTBOT_VALIDATION
+sleep 60
+echo "Sleep done"

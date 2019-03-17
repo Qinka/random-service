@@ -6,6 +6,10 @@ curl -sSL {{request.url_root}}static/tun > /sbin/tun
 chmod a+x /sbin/tun
 curl -sSL {{request.url_root}}install/default > /etc/tun.d/default
 chmod a+x /etc/tun.d/default
+curl -sSL {{request.url_root}}install/certbot-au > /etc/tun.d/certbot-au
+chmod a+x /etc/tun.d/certbot-au
+curl -sSL {{request.url_root}}install/certbot-cleanup > /etc/tun.d/certbot-cleanup
+chmod a+x /etc/tun.d/certbot-cleanup
 echo "Input token"
 read token
 echo $token > /etc/tun.d/token
