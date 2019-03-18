@@ -90,10 +90,10 @@ def get_install():
 def get_install_default():
     return render_template('default', root = request.url_root)
 @app.route('/install/certbot-au')
-def get_install_default():
+def get_install_certbot_au():
     return render_template('certbot-au', root = request.url_root)
 @app.route('/install/certbot-cleanup')
-def get_install_default():
+def get_install_certbot_cleanup():
     return render_template('certbot-cleanup', root = request.url_root)
 
 
