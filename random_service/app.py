@@ -89,6 +89,12 @@ def get_install():
 @app.route('/install/default')
 def get_install_default():
     return render_template('default', root = request.url_root)
+@app.route('/install/certbot-au')
+def get_install_default():
+    return render_template('certbot-au', root = request.url_root)
+@app.route('/install/certbot-cleanup')
+def get_install_default():
+    return render_template('certbot-cleanup', root = request.url_root)
 
 
 def get_file_or_param(name, decode='utf-8'):
