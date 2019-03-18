@@ -16,7 +16,7 @@ function err() {
 ####################################################
 
 # User Agent
-USR_AGENT="tun/0.1 me@qinka.pro"
+USR_AGENT="tun/0.1/me@qinka.pro"
 debug Using USR_AGENT $USR_AGENT
 
 # Setting localhost to default API server url, if TUN_API_SERVER_URL not set.
@@ -69,7 +69,7 @@ function print_json() {
 }
 
 function lookUpHostIP() {
-    HOSTIP=`curl -sSL                          \
+    HOSTIP=`curl                          \
                 -A $USR_AGENT             \
                 $__IGNORE_ERROR_SSL_      \
                 -X POST                   \
@@ -93,7 +93,7 @@ function lookUpIp_context() {
         err Failed to fetch host IP.
         return 1
     fi
-    IP=`curl -sSL \
+    IP=`curl \
         -A $USR_AGENT             \
         $__IGNORE_ERROR_SSL_      \
         -X POST $TUN_API_SERVER_URL/ipaddr\?ip=v4 \
@@ -107,7 +107,7 @@ function lookUpInetIP_taobao() {
 
 function fetchDnspodRecords() {
     # $1 domain
-    RECORDS=`curl -sSL                                      \
+    RECORDS=`curl                                      \
                 -A $USR_AGENT                          \
                 $__IGNORE_ERROR_SSL_                   \
                 -X POST                                \
@@ -140,7 +140,7 @@ function deleteDnspodRecord() {
         fi
         RECORDS=$RECORDS$data
     done
-    DEL_RECORED_PARAM=`curl -sSL                                                                      \
+    DEL_RECORED_PARAM=`curl                                                                      \
                 -A $USR_AGENT                                                                    \
                 $__IGNORE_ERROR_SSL_                                                             \
                 -X POST                                                                          \
@@ -159,7 +159,7 @@ function deleteDnspodRecord() {
     fi
     ## Delete record
     RECORD_ID=`echo $DEL_RECORED_PARAM | tr " " "\n"`
-    DEL_RT=`curl -sSL                                    \
+    DEL_RT=`curl                                    \
             -A $USR_AGENT                           \
             $__IGNORE_ERROR_SSL_                    \
             -X POST https://dnsapi.cn/Record.Remove \
@@ -198,7 +198,7 @@ function updateDnspodRecord() {
         RECORD_TTL=600
     fi
 
-    RT=`curl -sSL                                        \
+    RT=`curl                                        \
             -A $USR_AGENT                           \
             $__IGNORE_ERROR_SSL_                    \
             -X POST                                 \
