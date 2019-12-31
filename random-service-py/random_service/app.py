@@ -28,7 +28,7 @@ def handle_bad_request(e):
 
 @app.route("/")
 def index():
-    return redirect('https://github.com/Qinka/random-service')
+    return "Random Service Python API server.\n"
 
 ipv4_pattern = r'(([0-9]{1,3}.)+[0-9]{1,3})+'
 ipv6_pattern = r'(([a-f0-9]{1,4}:?:)+[a-f0-9]{1,4})+'

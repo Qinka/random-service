@@ -1,5 +1,5 @@
 FROM python:3
-MAINTAINER Johann Lee <me@qinka.pro>
+LABEL maintainer="Johann Lee <me@qinka.pro>"
 
 ADD . /application
 RUN pip install flask

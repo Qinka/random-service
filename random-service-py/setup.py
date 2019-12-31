@@ -1,14 +1,15 @@
 import setuptools
 import os
 
-with open("README.md", "r") as f:
-    long_description = f.read()
+# with open("README.md", "r") as f:
+#     long_description = f.read()
+long_description = ""
 
 def find_files(path):
     return map(lambda x:os.path.join(path,x), os.listdir(path))
 
 setuptools.setup(
-    name = "random-service",
+    name = "random-service-py",
     version = "0.1.0",
     description = "Random services written in Python",
     long_description = long_description,
@@ -25,6 +26,7 @@ setuptools.setup(
     ],
     install_requires=[
         'flask',
+        'pyyaml',
         ],
     data_files = [
         ('', find_files('random_service/static')),

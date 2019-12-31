@@ -1,0 +1,12 @@
+[package]
+name = "random-service-rs"
+version = "0.1.0"
+authors = ["Johann Lee <me@qinka.pro>"]
+edition = "2018"
+
+[dependencies]
+actix-web = "2.0"
+actix-rt = "1.0"
+serde_yaml = "0.8.7"
+argparse = "0.2.2"
+env_logger = "0.6.1"
