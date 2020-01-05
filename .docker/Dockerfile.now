@@ -1,0 +1,23 @@
+# Building image for rust
+FROM 1.40.0-buster as rust-builder
+
+WORKDIR /usr/src/random-service
+ADD . .
+WORKDIR /usr/src/random-service/random-service-rs
+RUN RUN cargo install --path .
+
+# Building image for python
+
+FROM python:3.7 as py-builder
+WORKDIR /usr/src/random-service
+ADD . .
+WORKDIR /usr/src/random-service/random-service-py
+RUN RUN pip install pyinstaller
+
+
+# Final image
+FROM debian:buster
+LABEL maintainer="Johann Lee <me@qinka.pro>"
+# Install random-service-rs
+RUN apt-get update && apt-get install -y libssl
+COPY --from=rust-builder /usr/src/random-service-rs /usr/local/bin/random-service-rs
