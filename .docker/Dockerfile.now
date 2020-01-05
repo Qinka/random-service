@@ -4,7 +4,8 @@ FROM rust:1.40.0-buster as rust-builder
 WORKDIR /usr/src/random-service
 ADD . .
 WORKDIR /usr/src/random-service/random-service-rs
-RUN cargo install --path .
+RUN cargo build --release
+RUN ls target/release
 
 # Building image for python
 
@@ -20,8 +21,8 @@ FROM debian:buster
 LABEL maintainer="Johann Lee <me@qinka.pro>"
 ADD .docker/entrypoint.sh /usr/local/bin
 # Install random-service-rs
-RUN apt-get update && apt-get install -y libssl tini
-COPY --from=rust-builder /usr/src/random-service-rs /usr/local/bin/random-service-rs
+RUN apt-get update && apt-get install -y libssl-dev openssl tini
+COPY --from=rust-builder /usr/src/random-service/random-service-rs/target/release/random-service-rs /usr/local/bin/random-service-rs
 # Install random-service-py
 COPY --from=py-builder /usr/src/random-service/random-service-py/random_service.dist /usr/local/random_service_py
 CMD ["entrypoint.sh"]

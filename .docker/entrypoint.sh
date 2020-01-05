@@ -2,7 +2,7 @@
 set -e
 
 # Execute py src
-tini -- /usr/local/random_service_py/random_service
+/usr/bin/tini -- /usr/local/random_service_py/random_service --config /etc/random-service/config.yaml
 
 # Execute rs src
-exec tini -- /usr/local/bin/random-service-rs
+exec /usr/bin/tini -- /usr/local/bin/random-service-rs --config /etc/random-service/config.yaml
