@@ -4,7 +4,7 @@ FROM rust:1.40.0-buster as rust-builder
 WORKDIR /usr/src/random-service
 ADD . .
 WORKDIR /usr/src/random-service/random-service-rs
-RUN RUN cargo install --path .
+RUN cargo install --path .
 
 # Building image for python
 
