@@ -11,7 +11,7 @@ JSON format
 | error code | description    |
 |------------|----------------|
 | 1          | internal error |
-|            |                |
+| 2          | not found      |
 |            |                |
 |            |                |
 |            |                |

@@ -8,13 +8,11 @@ use env_logger;
 mod error;
 mod db;
 mod state;
+mod app;
 
 use error::{R};
 use state::{SvrState, AuthState};
 
-async fn index() -> error::Resp {
-    error::R::ok("Random Service Rust API server.").to_json_result()
-}
 
 
 #[actix_rt::main]
@@ -48,7 +46,9 @@ async fn main() -> std::io::Result<()> {
                 App::new()
                     .data(SvrState{auth: AuthState{mongo: mongo.clone()}})
                     .wrap(Logger::default())
-                    .route("/", web::get().to(index))
+                    .configure(app::root_config)
+                    .default_service(
+                        web::route().to(app::render_404))
             })
             .bind(format!("0.0.0.0:{}", config.get("port").expect("Need port (int)").as_u64().expect("port should be int")))?
             .run()

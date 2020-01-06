@@ -15,13 +15,20 @@ pub struct R<T> where T: Serialize {
 pub enum ErrorResponse {
     #[fail(display = "An internal error occurred. Connect with maintainer please!")]
     InternalError,
+    #[fail(display = "Not found")]
+    NotFound,
 }
 
 const INTERNALERROR_CODE: u16 = 1;
+const NOTFOUND_CODE: u16 = 2;
 
 impl error::ResponseError for ErrorResponse {
     fn error_response(&self) -> HttpResponse {
         match *self {
+            ErrorResponse::NotFound => {
+                let r = R::<()>::err(NOTFOUND_CODE, &self.to_string());
+                HttpResponse::NotFound().json(r)
+            }
             _ => {
                 let r = R::<()>::err(INTERNALERROR_CODE, &self.to_string());
                 HttpResponse::InternalServerError().json(r)
