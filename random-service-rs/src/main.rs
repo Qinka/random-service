@@ -13,7 +13,7 @@ use error::{R};
 use state::{SvrState, AuthState};
 
 async fn index() -> error::Resp {
-    error::R::ok("Random Service Rust API server.\n").to_json_result()
+    error::R::ok("Random Service Rust API server.").to_json_result()
 }
 
 
@@ -40,16 +40,14 @@ async fn main() -> std::io::Result<()> {
     match config.get("random-service-rs") {
         None => panic!("invailed config file, need field of random-service-py"),
         Some(config) => {
-            // std::env::var("RUST_LOG")
-            // std::env::set_var("RUST_LOG", "actix_web=info");
+            std::env::var("RUST_LOG");
+            std::env::set_var("RUST_LOG", "actix_web=info");
             env_logger::init();
-
 
             HttpServer::new(move || {
                 App::new()
                     .data(SvrState{auth: AuthState{mongo: mongo.clone()}})
                     .wrap(Logger::default())
-                    .wrap(Logger::new("%a %{User-Agent}i"))
                     .route("/", web::get().to(index))
             })
             .bind(format!("0.0.0.0:{}", config.get("port").expect("Need port (int)").as_u64().expect("port should be int")))?
