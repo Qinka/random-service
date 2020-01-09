@@ -58,7 +58,7 @@ impl error::ResponseError for ErrorResponse {
     }
 }
 
-pub fn to_ErrorResponse<E: ToString>(e: E) -> ErrorResponse {
+pub fn to_error_response<E: ToString>(e: E) -> ErrorResponse {
     // panic!("???");
     ErrorResponse::InternalError{reason: e.to_string()}
 }

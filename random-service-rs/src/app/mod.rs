@@ -1,6 +1,5 @@
-use actix_web::{dev, web, guard, App, HttpResponse, HttpServer, Result};
+use actix_web::{web, guard};
 use crate::error::{R, Resp, ErrorResponse};
-use crate::state::{SvrState, AuthState};
 
 
 mod auth;

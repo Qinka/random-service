@@ -1,4 +1,4 @@
-use actix_web::{web, App, HttpResponse, HttpServer, Responder};
+use actix_web::{web, App, HttpServer};
 use actix_web::middleware::Logger;
 use serde_yaml::{from_reader, Value};
 use argparse::{ArgumentParser, Store};
@@ -10,7 +10,6 @@ mod db;
 mod state;
 mod app;
 
-use error::{R};
 use state::{SvrState, AuthState};
 
 
