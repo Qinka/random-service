@@ -38,8 +38,9 @@ async fn main() -> std::io::Result<()> {
     match config.get("random-service-rs") {
         None => panic!("invailed config file, need field of random-service-py"),
         Some(config) => {
-            std::env::var("RUST_LOG");
-            std::env::set_var("RUST_LOG", "actix_web=info");
+            if std::env::var("RUST_LOG").is_err() {
+                std::env::set_var("RUST_LOG", "info");
+            }
             env_logger::init();
 
             HttpServer::new(move || {
