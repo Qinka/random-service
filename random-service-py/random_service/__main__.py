@@ -1,4 +1,4 @@
-from   random_service import app
+from   random_service import *
 import argparse
 
 from yaml import load, dump
@@ -17,6 +17,8 @@ if __name__ == '__main__':
     if 'random-service-py' not in config:
         raise Exception("invailed config file, need field of random-service-py")
     else:
+        raw = config
         config = config['random-service-py']
-    app.config['raw'] = config
+    app.config['raw'] = raw
+    app.config['MONGO_URI'] = raw['auth-mg']['uri']
     app.run(host='0.0.0.0', port=config['port'])

@@ -27,6 +27,8 @@ setuptools.setup(
     install_requires=[
         'flask',
         'pyyaml',
+        'openpyxl',
+        'pymongo'
         ],
     data_files = [
         ('', find_files('random_service/static')),

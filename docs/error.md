@@ -15,7 +15,7 @@ JSON format
 | 3          | login failed    |
 | 4          | invailded token |
 | 5          | no auths        |
-|            |                 |
+| 6          | parameter error |
 |            |                 |
 |            |                 |
 |            |                 |

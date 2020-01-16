@@ -13,7 +13,7 @@ FROM python:3.7 as py-builder
 WORKDIR /usr/src/random-service
 ADD . .
 WORKDIR /usr/src/random-service/random-service-py
-RUN pip install nuitka flask pyyaml
+RUN pip install nuitka flask pyyaml openpyxl pymongo
 RUN python -m nuitka --follow-imports --include-plugin-directory=/usr/local/lib/python3.7/site-packages/jinja2/ --standalone random_service
 
 # Final image
